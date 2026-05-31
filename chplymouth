@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+# Path to Plymouth themes
+THEMES_DIR="/usr/share/plymouth/themes"
+
+echo "=== Available Plymouth Themes ==="
+ls -1 "$THEMES_DIR"
+echo "================================="
+echo ""
+
+# Prompt for theme selection
+read -p "Enter the name of the theme you want to apply: " THEME_NAME
+
+# Check if the chosen theme folder actually exists
+if [ -d "$THEMES_DIR/$THEME_NAME" ]; then
+    echo -e "\nApplying theme '$THEME_NAME' (this might take a few seconds)..."
+    
+    # >/dev/null hides the verbose output, but 2>&1 ensures errors still show up if it fails
+    sudo plymouth-set-default-theme -R "$THEME_NAME" >/dev/null
+
+    if [ $? -eq 0 ]; then
+        echo "[Success] Theme '$THEME_NAME' applied to all kernels!"
+    else
+        echo "[Error] Something went wrong while applying the theme."
+    fi
+else
+    echo "[Error] Theme '$THEME_NAME' does not exist in $THEMES_DIR."
+    exit 1
+fi
